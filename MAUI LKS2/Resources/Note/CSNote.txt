@@ -1,0 +1,9 @@
+﻿// Change page
+// WITH ANIMATION	: await Shell.Current.GoToAsync("Pages/TEST");
+// NO ANIMATION		: await Shell.Current.GoToAsync(nameof(TEST), false);
+
+// Page registration
+// Routing.RegisterRoute("Pages/TEST", typeof(TEST));
+
+// Change colour mode
+// UserAppTheme = AppTheme.Dark;

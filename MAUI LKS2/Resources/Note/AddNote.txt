@@ -1,0 +1,21 @@
+﻿App.xaml
+Renderer, can change the default colour mode.
+
+AppShell.xaml
+Pretty much public/index.php, but for MAUI. It defines the routes and the navigation structure of the app.
+Also controls the starting page of the app and the navigation bar.
+
+.xaml are the layout files, .xaml.cs are similar to .js files.
+
+
+-- XAML
+
+ContentPage
+Can only use 1 tag inside
+
+
+-- Process
+
+Adding a new page:
+1. Add a PageContent file and change the name.
+2. Add the page to the AppShell.xaml file, and add a route for it.

@@ -1,0 +1,17 @@
+﻿using MAUI_LKS2.Pages;
+
+namespace MAUI_LKS2
+{
+    public partial class Intro : ContentPage
+    {
+        public Intro()
+        {
+            InitializeComponent();
+        }
+
+        private async void OnBtnClicked(object? sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("Pages/Login", false);
+        }
+    }
+}
