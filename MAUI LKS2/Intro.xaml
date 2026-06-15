@@ -19,11 +19,11 @@
                     VerticalOptions="Center" >
                   
                     <Label
-                        Text="Welcome to .NET Multi-platform App UI"
+                        Text="Welcome to MAUILKS!"
                         Style="{StaticResource SubHeadline}" />
 
                     <Button
-                        Text="Okay"
+                        Text="Continue"
                         Clicked="OnBtnClicked"
                         WidthRequest="150" />
 

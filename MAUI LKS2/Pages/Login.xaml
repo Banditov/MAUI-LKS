@@ -2,6 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MAUI_LKS2.Pages.Login">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+    
     <Grid
         RowDefinitions="Auto, *">
         
@@ -12,26 +17,27 @@
             
             <Label
                 Text="Login"
-                FontSize="Header" 
+                FontSize="Title" 
                 HorizontalTextAlignment="Center" />
 
             <VerticalStackLayout 
                 Spacing="25">
 
                 <Entry 
+                    x:Name="EmailEntry"
                     Placeholder="E-Mail..." 
-                    WidthRequest="400" />
+                    WidthRequest="350" />
 
                 <HorizontalStackLayout
                     HorizontalOptions="Center" 
-                    WidthRequest="400" 
+                    WidthRequest="350" 
                     Spacing="25">
 
                     <Entry 
                         x:Name="PasswordEntry"
                         Placeholder="Password..." 
                         IsPassword="True" 
-                        WidthRequest="325" />
+                        WidthRequest="275" />
 
                     <Button 
                         x:Name="PasswordShow"
@@ -42,7 +48,7 @@
                 </HorizontalStackLayout>
 
                 <Button 
-                    Text="Already have an account" 
+                    Text="Don't have an account" 
                     TextColor="Grey"
                     Clicked="OnRegisterBtnClicked"
                     BackgroundColor="Transparent" 
@@ -53,10 +59,12 @@
             </VerticalStackLayout>
 
             <Button 
+                x:Name="LoginBtn"
                 Text="Log-in" 
                 TextColor="White"
                 BackgroundColor="{StaticResource Custom1}" 
-                WidthRequest="100" />
+                WidthRequest="100"
+                IsEnabled="False" />
                 
         </VerticalStackLayout>
     </Grid>
