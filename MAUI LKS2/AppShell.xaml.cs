@@ -9,6 +9,7 @@ namespace MAUI_LKS2
             InitializeComponent();
 
             Routing.RegisterRoute("Pages/Login", typeof(Login));
+            Routing.RegisterRoute("Pages/Register", typeof(Register));
         }
     }
 }

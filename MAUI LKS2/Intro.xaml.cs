@@ -11,7 +11,7 @@ namespace MAUI_LKS2
 
         private async void OnBtnClicked(object? sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("Pages/Login", false);
+            await Shell.Current.GoToAsync("Pages/Login");
         }
     }
 }

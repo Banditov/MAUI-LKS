@@ -7,22 +7,27 @@
         <Image
             Source="background.jpg"
             Aspect="AspectFill" />
+        
         <ScrollView>
             <Grid 
                 RowDefinitions="Auto, *"
-                Margin="200" RowSpacing="100">
+                Margin="100" >
 
-                <Label
-                    Text="Welcome to .NET Multi-platform App UI"
-                    Style="{StaticResource SubHeadline}"
-                    Grid.Row="1"
-                    />
+                <VerticalStackLayout
+                    Spacing="50" 
+                    Grid.Row="1" 
+                    VerticalOptions="Center" >
+                  
+                    <Label
+                        Text="Welcome to .NET Multi-platform App UI"
+                        Style="{StaticResource SubHeadline}" />
 
-                <Button
-                    Text="Okay"
-                    Clicked="OnBtnClicked"
-                    WidthRequest="150"
-                    Grid.Row="2" VerticalOptions="Center" />
+                    <Button
+                        Text="Okay"
+                        Clicked="OnBtnClicked"
+                        WidthRequest="150" />
+
+                </VerticalStackLayout>
             </Grid>
         </ScrollView>
     </Grid>
