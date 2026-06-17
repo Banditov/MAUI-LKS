@@ -62,6 +62,7 @@
                 x:Name="LoginBtn"
                 Text="Log-in" 
                 TextColor="White"
+                Clicked="OnLoginBtnClicked"
                 BackgroundColor="{StaticResource Custom1}" 
                 WidthRequest="100"
                 IsEnabled="False" />

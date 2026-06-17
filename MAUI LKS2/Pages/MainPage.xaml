@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAUI_LKS2.Pages.MainPage"
+             Title="MainPage">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False"></BackButtonBehavior>
+    </Shell.BackButtonBehavior>
+    
+    <Grid>
+        <Image 
+            Source="background.jpg" 
+            Aspect="AspectFill" />
+
+        <Border 
+            Stroke="White"
+            Opacity="0.8"
+            Scale="0.8"
+            StrokeThickness="2" >
+            
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="20"></RoundRectangle>
+            </Border.StrokeShape>
+
+            <Grid RowDefinitions="Auto, *"
+                Background="White"
+                Opacity="0.2">
+                
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>

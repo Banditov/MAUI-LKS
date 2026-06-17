@@ -12,7 +12,13 @@ namespace MAUI_LKS2
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            Window window = new(new AppShell())
+            {
+                MinimumWidth = 800,
+                MinimumHeight = 600
+            };
+
+            return window;
         }
     }
 }

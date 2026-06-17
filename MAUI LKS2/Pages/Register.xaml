@@ -81,6 +81,7 @@
             <Button 
                 x:Name="RegisterBtn"
                 Text="Register" 
+                Clicked="OnRegisterBtnClicked"
                 TextColor="White"
                 BackgroundColor="{StaticResource Custom1}" 
                 WidthRequest="100"
