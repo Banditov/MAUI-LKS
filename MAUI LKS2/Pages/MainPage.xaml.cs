@@ -6,4 +6,13 @@ public partial class MainPage : ContentPage
 	{
 		InitializeComponent();
 	}
+
+	private void AddBtnClicked (object? sender, EventArgs e)
+	{
+
+    }
+    private void DatabaseBtnClicked(object? sender, EventArgs e)
+    {
+
+    }
 }

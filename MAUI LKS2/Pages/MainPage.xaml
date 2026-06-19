@@ -20,13 +20,171 @@
             StrokeThickness="2" >
             
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="20"></RoundRectangle>
+                <RoundRectangle CornerRadius="20" />
             </Border.StrokeShape>
 
-            <Grid RowDefinitions="Auto, *"
-                Background="White"
-                Opacity="0.2">
-                
+            <Grid RowDefinitions="Auto, Auto">
+                <Grid.Background>#33FFFFFF</Grid.Background>
+                <VerticalStackLayout 
+                    Padding="30, 30, 30, 15"
+                    Grid.Row="0"
+                    Spacing="15" >
+
+                    <Grid 
+                        ColumnDefinitions="*, Auto"
+                        ColumnSpacing="10" >
+
+                        <Border
+                            Grid.Column="0"
+                            Background="White" 
+                            StrokeThickness="0" >
+
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10"/>
+                            </Border.StrokeShape>
+                            <Entry 
+                                TextColor="Black"
+                                Placeholder="Search..." />
+
+                        </Border>
+                        <Button 
+                            Grid.Column="1"
+                            x:Name="DatabaseBtn"
+                            Clicked="DatabaseBtnClicked"
+                            Text="Import Database"
+                            WidthRequest="160" />
+                        
+                    </Grid>
+                    <Grid 
+                        ColumnDefinitions="Auto, *, Auto"
+                        ColumnSpacing="10" >
+
+                        <Border 
+                            Grid.Column="0" 
+                            StrokeThickness="0" >
+                            
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20"></RoundRectangle>
+                            </Border.StrokeShape>
+
+                            <Grid 
+                                ColumnDefinitions="Auto, *, Auto"
+                                Background="White"
+                                ColumnSpacing="10"
+                                Padding="10" >
+
+                                <DatePicker Grid.Column="0" Background="#5A8EFF" />
+                                <Label Grid.Column="1" Text="to" TextColor="Black" VerticalOptions="Center" />
+                                <DatePicker Grid.Column="2" Background="#5A8EFF" />
+                            </Grid>
+                        </Border>
+                        <Border 
+                            Grid.Column="1" 
+                            StrokeThickness="0" >
+                            
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20"></RoundRectangle>
+                            </Border.StrokeShape>
+
+                            <Grid 
+                                ColumnDefinitions="*, Auto, Auto, Auto"
+                                Background="White"
+                                Padding="10" 
+                                ColumnSpacing="10">
+
+                                <Picker Grid.Column="0" Background="#5A8EFF" />
+                                <Entry Grid.Column="1" Background="#5A8EFF" WidthRequest="100" Placeholder="Min" 
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White" />
+                                <Label Grid.Column="2" Text="to" TextColor="Black" VerticalOptions="Center" />
+                                <Entry Grid.Column="3" Background="#5A8EFF" WidthRequest="100" Placeholder="Max" 
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                            </Grid>
+                        </Border>
+                        <Border 
+                            Grid.Column="2" 
+                            StrokeThickness="0" >
+
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20"></RoundRectangle>
+                            </Border.StrokeShape>
+
+                            <Grid 
+                                ColumnDefinitions="Auto, Auto"
+                                Background="White"
+                                Padding="10" 
+                                ColumnSpacing="10">
+
+                                <Button Grid.Column="0" Background="#5A8EFF" Text="Apply" TextColor="White"/>
+                                <Button Grid.Column="1" Background="#FF5A5A" Text="Reset" TextColor="White"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <Grid
+                        ColumnSpacing="10">
+                        <Border 
+                            StrokeThickness="0" >
+
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20"></RoundRectangle>
+                            </Border.StrokeShape>
+
+                            <Grid 
+                                ColumnDefinitions="*, *, *, Auto"
+                                Background="White"
+                                Padding="10" 
+                                ColumnSpacing="10">
+
+                                <Entry Grid.Column="0" Background="#5A8EFF" Placeholder="Product Name" 
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                <Entry Grid.Column="1" Background="#5A8EFF" Placeholder="Price" 
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                <Entry Grid.Column="2" Background="#5A8EFF" Placeholder="Sales" 
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                <Button 
+                                    Grid.Column="3"
+                                    x:Name="AddBtn"
+                                    Clicked="AddBtnClicked"
+                                    Text="Add Data +"
+                                    WidthRequest="160" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+                <Border 
+                    Grid.Row="1" 
+                    Background="White"
+                    Margin="30, 0"
+                    Padding="10">
+                    
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*, *, *, *, *, *, *">
+                            <Label Grid.Column="0" Text="No." TextColor="Black" HorizontalTextAlignment="Center" />
+                            <Label Grid.Column="1" Grid.ColumnSpan="3"  Text="Product" TextColor="Black" HorizontalTextAlignment="Center" />
+                            <Label Grid.Column="4" Text="Price" TextColor="Black" HorizontalTextAlignment="Center" />
+                            <Label Grid.Column="5" Text="Sales" TextColor="Black" HorizontalTextAlignment="Center" />
+                            <Label Grid.Column="6" Text="Actions" TextColor="Black" HorizontalTextAlignment="Center" />
+                        </Grid>
+                        <CollectionView>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*, *, *, *, *, *, *">
+                                        <Label Grid.Column="0" Text="No." TextColor="Black" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="1" Grid.ColumnSpan="3"  Text="Product" TextColor="Black" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="4" Text="Price" TextColor="Black" HorizontalTextAlignment="Center" />
+                                        <Label Grid.Column="5" Text="Sales" TextColor="Black" HorizontalTextAlignment="Center" />
+                                        <HorizontalStackLayout Grid.Column="6" >
+                                            <Button Text="Edit" Background="#FFF85A" />
+                                            <Button Text="Delete" Background="#FF5A5A" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
             </Grid>
         </Border>
     </Grid>
