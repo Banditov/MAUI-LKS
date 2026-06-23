@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MAUI_LKS2.ViewModels"
+             xmlns:models="clr-namespace:MAUI_LKS2.Models"
              x:Class="MAUI_LKS2.Pages.MainPage"
-             Title="MainPage">
+             Title="MainPage"
+             x:DataType="local:SalesViewModel">
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False"></BackButtonBehavior>
     </Shell.BackButtonBehavior>
     
-    <Grid>
+    <Grid ColumnDefinitions="*">
         <Image 
             Source="background.jpg" 
             Aspect="AspectFill" />
@@ -43,6 +46,7 @@
                                 <RoundRectangle CornerRadius="10"/>
                             </Border.StrokeShape>
                             <Entry 
+                                x:Name="SearchBar"
                                 TextColor="Black"
                                 Placeholder="Search..." />
 
@@ -56,30 +60,11 @@
                         
                     </Grid>
                     <Grid 
-                        ColumnDefinitions="Auto, *, Auto"
+                        ColumnDefinitions="*, Auto"
                         ColumnSpacing="10" >
-
+                        
                         <Border 
                             Grid.Column="0" 
-                            StrokeThickness="0" >
-                            
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="20"></RoundRectangle>
-                            </Border.StrokeShape>
-
-                            <Grid 
-                                ColumnDefinitions="Auto, *, Auto"
-                                Background="White"
-                                ColumnSpacing="10"
-                                Padding="10" >
-
-                                <DatePicker Grid.Column="0" Background="#5A8EFF" />
-                                <Label Grid.Column="1" Text="to" TextColor="Black" VerticalOptions="Center" />
-                                <DatePicker Grid.Column="2" Background="#5A8EFF" />
-                            </Grid>
-                        </Border>
-                        <Border 
-                            Grid.Column="1" 
                             StrokeThickness="0" >
                             
                             <Border.StrokeShape>
@@ -92,16 +77,26 @@
                                 Padding="10" 
                                 ColumnSpacing="10">
 
-                                <Picker Grid.Column="0" Background="#5A8EFF" />
+                                <Picker 
+                                    Grid.Column="0" 
+                                    Background="#5A8EFF"
+                                    SelectedIndexChanged="OnFilterPickerSelected">
+                                    
+                                    <Picker.Items>
+                                        <x:String>No.</x:String>
+                                        <x:String>Price</x:String>
+                                        <x:String>Sales</x:String>
+                                    </Picker.Items>
+                                </Picker>
                                 <Entry Grid.Column="1" Background="#5A8EFF" WidthRequest="100" Placeholder="Min" 
-                                       HorizontalTextAlignment="Center" PlaceholderColor="White" />
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White" x:Name="MinEntry"/>
                                 <Label Grid.Column="2" Text="to" TextColor="Black" VerticalOptions="Center" />
                                 <Entry Grid.Column="3" Background="#5A8EFF" WidthRequest="100" Placeholder="Max" 
-                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White" x:Name="MaxEntry"/>
                             </Grid>
                         </Border>
                         <Border 
-                            Grid.Column="2" 
+                            Grid.Column="1" 
                             StrokeThickness="0" >
 
                             <Border.StrokeShape>
@@ -114,8 +109,8 @@
                                 Padding="10" 
                                 ColumnSpacing="10">
 
-                                <Button Grid.Column="0" Background="#5A8EFF" Text="Apply" TextColor="White"/>
-                                <Button Grid.Column="1" Background="#FF5A5A" Text="Reset" TextColor="White"/>
+                                <Button Grid.Column="0" Background="#5A8EFF" Text="Apply" TextColor="White" Clicked="FilterApply"/>
+                                <Button Grid.Column="1" Background="#FF5A5A" Text="Reset" TextColor="White" Clicked="FilterReset"/>
                             </Grid>
                         </Border>
                     </Grid>
@@ -135,11 +130,14 @@
                                 ColumnSpacing="10">
 
                                 <Entry Grid.Column="0" Background="#5A8EFF" Placeholder="Product Name" 
-                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"
+                                       x:Name="ProductNameEntry" />
                                 <Entry Grid.Column="1" Background="#5A8EFF" Placeholder="Price" 
-                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"
+                                       x:Name="PriceEntry" />
                                 <Entry Grid.Column="2" Background="#5A8EFF" Placeholder="Sales" 
-                                       HorizontalTextAlignment="Center" PlaceholderColor="White"/>
+                                       HorizontalTextAlignment="Center" PlaceholderColor="White"
+                                       x:Name="SalesEntry" />
                                 <Button 
                                     Grid.Column="3"
                                     x:Name="AddBtn"
@@ -159,26 +157,56 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="20"/>
                     </Border.StrokeShape>
-                    <VerticalStackLayout>
-                        <Grid ColumnDefinitions="*, *, *, *, *, *, *">
-                            <Label Grid.Column="0" Text="No." TextColor="Black" HorizontalTextAlignment="Center" />
-                            <Label Grid.Column="1" Grid.ColumnSpan="3"  Text="Product" TextColor="Black" HorizontalTextAlignment="Center" />
-                            <Label Grid.Column="4" Text="Price" TextColor="Black" HorizontalTextAlignment="Center" />
-                            <Label Grid.Column="5" Text="Sales" TextColor="Black" HorizontalTextAlignment="Center" />
-                            <Label Grid.Column="6" Text="Actions" TextColor="Black" HorizontalTextAlignment="Center" />
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="0.3*, 3*, *, 0.6*, 0.8*">
+                            <Label Grid.Column="0" Text="No." TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="1" Text="Product" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="2" Text="Price" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="3" Text="Sales" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Label Grid.Column="4" Text="Actions" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                         </Grid>
-                        <CollectionView>
+                        <CollectionView x:Name="ProductsCollection" ItemsSource="{Binding Products}">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ColumnDefinitions="*, *, *, *, *, *, *">
-                                        <Label Grid.Column="0" Text="No." TextColor="Black" HorizontalTextAlignment="Center" />
-                                        <Label Grid.Column="1" Grid.ColumnSpan="3"  Text="Product" TextColor="Black" HorizontalTextAlignment="Center" />
-                                        <Label Grid.Column="4" Text="Price" TextColor="Black" HorizontalTextAlignment="Center" />
-                                        <Label Grid.Column="5" Text="Sales" TextColor="Black" HorizontalTextAlignment="Center" />
-                                        <HorizontalStackLayout Grid.Column="6" >
-                                            <Button Text="Edit" Background="#FFF85A" />
-                                            <Button Text="Delete" Background="#FF5A5A" />
-                                        </HorizontalStackLayout>
+                                <DataTemplate x:DataType="models:Sale">
+                                    <Grid ColumnDefinitions="0.3*, 3*, *, 0.6*, 0.8*" Padding="0,0,0,10" ColumnSpacing="10">
+                                        <Border Grid.Column="0" Stroke="Transparent" Background="White">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"></RoundRectangle>
+                                            </Border.StrokeShape>
+
+                                            <Label Text="{Binding Id}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="1" Stroke="Transparent" Background="White">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"></RoundRectangle>
+                                            </Border.StrokeShape>
+
+                                            <Label Text="{Binding ProductName}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="2" Stroke="Transparent" Background="White">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"></RoundRectangle>
+                                            </Border.StrokeShape>
+
+                                            <Label Text="{Binding PriceDisplay}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="3" Stroke="Transparent" Background="White">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"></RoundRectangle>
+                                            </Border.StrokeShape>
+
+                                            <Label Text="{Binding Sales}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="4" Stroke="Transparent" Background="White" Padding="10">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"></RoundRectangle>
+                                            </Border.StrokeShape>
+
+                                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" >
+                                                <Button Text="Edit" Background="#FFAC00" TextColor="White" />
+                                                <Button Text="Delete" Background="#FF5A5A" TextColor="White" Clicked="DeleteBtnClicked" x:Name="DeleteBtn" CommandParameter="{Binding Id}"/>
+                                            </HorizontalStackLayout>
+                                        </Border>
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>

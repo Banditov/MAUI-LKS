@@ -14,7 +14,7 @@ namespace MAUI_LKS2
         {
             Window window = new(new AppShell())
             {
-                MinimumWidth = 800,
+                MinimumWidth = 1200,
                 MinimumHeight = 600
             };
 

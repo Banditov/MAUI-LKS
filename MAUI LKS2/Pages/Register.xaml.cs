@@ -34,11 +34,8 @@ public partial class Register : ContentPage
 			PasswordEntry.IsPassword = false;
             PasswordShow.BackgroundColor = Color.FromArgb("#464646");
         }
-		else
-		{
-			PasswordEntry.IsPassword = true;
-            PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
-        }
+		PasswordEntry.IsPassword = true;
+        PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
 	}
 
     private void OnEyeBtnClickedConf(object? sender, EventArgs e)
@@ -48,11 +45,8 @@ public partial class Register : ContentPage
             PasswordEntryConf.IsPassword = false;
             PasswordShowConf.BackgroundColor = Color.FromArgb("#464646");
         }
-        else
-        {
-            PasswordEntryConf.IsPassword = true;
-            PasswordShowConf.BackgroundColor = Color.FromArgb("#7676ED");
-        }
+        PasswordEntryConf.IsPassword = true;
+        PasswordShowConf.BackgroundColor = Color.FromArgb("#7676ED");
     }
 
     private static string HashPassword(string password)
@@ -105,21 +99,15 @@ public partial class Register : ContentPage
                 if (rowsAffected > 0)
                 {
                     await DisplayAlertAsync("Success", "Account created successfully!", "OK");
-                    await Shell.Current.GoToAsync("..");
+                    await Shell.Current.GoToAsync("Pages/Login");
                 }
-                else
-                {
-                    await DisplayAlertAsync("Error", "Failed to create account", "OK");
-                }
+                await DisplayAlertAsync("Error", "Failed to create account", "OK");
             }
             catch (Exception ex)
             {
                 await DisplayAlertAsync("Error", ex.Message, "OK");
             }
         }
-        else
-        {
-            await DisplayAlertAsync("Wrong Input", "Password confirmation is wrong!", "OK");
-        }
+        await DisplayAlertAsync("Wrong Input", "Password confirmation is wrong!", "OK");
     }
 }

@@ -25,7 +25,7 @@ public partial class Login : ContentPage
 		string email = EmailEntry.Text;
 		string password = PasswordEntry.Text;
 
-        string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
+		string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
 
 		try
         {
@@ -54,10 +54,7 @@ public partial class Login : ContentPage
                 await DisplayAlertAsync("Success", "Login successful!", "OK");
                 await Shell.Current.GoToAsync("/Pages/MainPage");
             }
-            else
-            {
-                await DisplayAlertAsync("Login Failed", "Invalid email or password", "OK");
-            }
+            await DisplayAlertAsync("Login Failed", "Invalid email or password", "OK");
         }
 		catch (Exception ex)
 		{
@@ -72,11 +69,8 @@ public partial class Login : ContentPage
 			PasswordEntry.IsPassword = false;
 			PasswordShow.BackgroundColor = Color.FromArgb("#464646");
         }
-		else
-		{
-			PasswordEntry.IsPassword = true;
-			PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
-		}
+		PasswordEntry.IsPassword = true;
+		PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
 	}
 
 	private async void OnRegisterBtnClicked (object? sender, EventArgs e)
