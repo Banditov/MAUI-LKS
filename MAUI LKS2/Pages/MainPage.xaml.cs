@@ -62,6 +62,7 @@ public partial class MainPage : ContentPage
             {
                 await DisplayAlertAsync("Success", "Product added!", "OK");
                 await Shell.Current.GoToAsync("Pages/MainPage");
+                return;
             }
             await DisplayAlertAsync("Error", "Failed to add product", "OK");
         }
@@ -101,6 +102,62 @@ public partial class MainPage : ContentPage
         {
             await DisplayAlertAsync("Error", $"Delete failed: {ex.Message}", "OK");
         }
+    }
+
+    private async void EditBtnClicked(object? sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        var product = button.BindingContext as Sale;
+        product.IsEditing = true;
+        RefreshCollection();
+    }
+
+    private async void SaveBtnClicked(object? sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        var product = button.BindingContext as Sale;
+        int productId = (int)button.CommandParameter;
+
+        string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
+
+        var parentGrid = button.Parent as Grid;
+        var nameEntry = parentGrid.FindByName<Entry>("ProductNameEntryEdit");
+        var priceEntry = parentGrid.FindByName<Entry>("PriceEntryEdit");
+        var salesEntry = parentGrid.FindByName<Entry>("SalesEntryEdit");
+
+        string ProductName = nameEntry.Text;
+        decimal Price = Convert.ToDecimal(priceEntry.Text);
+        int Sales = Convert.ToInt32(salesEntry.Text);
+
+        try
+        {
+            using SqlConnection connection = new(conn);
+            await connection.OpenAsync();
+
+            string UpdateQuery = "UPDATE sales SET product_name = @ProductName, price = @Price, sales = @Sales WHERE id = @Id";
+            using SqlCommand update = new(UpdateQuery, connection);
+            update.Parameters.AddWithValue("@ProductName", ProductName);
+            update.Parameters.AddWithValue("@Price", Price);
+            update.Parameters.AddWithValue("@Sales", Sales);
+            update.Parameters.AddWithValue("@Id", productId);
+
+            int rowsAffected = await update.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
+            {
+                await DisplayAlertAsync("Success", "Product edited!", "OK");
+                await Shell.Current.GoToAsync("Pages/MainPage");
+                return;
+            }
+            await DisplayAlertAsync("Error", "Failed to edit product", "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+
+        product.IsEditing = false;
+        RefreshCollection();
     }
 
     private void OnFilterPickerSelected(object sender, EventArgs e)
@@ -158,5 +215,12 @@ public partial class MainPage : ContentPage
     private async void FilterReset(object? sender, EventArgs e)
     {
         ProductsCollection.ItemsSource = _allProducts;
+    }
+
+    private void RefreshCollection()
+    {
+        var currentSource = ProductsCollection.ItemsSource;
+        ProductsCollection.ItemsSource = null;
+        ProductsCollection.ItemsSource = currentSource;
     }
 }

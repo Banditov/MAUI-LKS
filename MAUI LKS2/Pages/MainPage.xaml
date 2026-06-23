@@ -3,9 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MAUI_LKS2.ViewModels"
              xmlns:models="clr-namespace:MAUI_LKS2.Models"
+             xmlns:converters="clr-namespace:MAUI_LKS2.Converters"
              x:Class="MAUI_LKS2.Pages.MainPage"
              Title="MainPage"
              x:DataType="local:SalesViewModel">
+
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False"></BackButtonBehavior>
@@ -181,21 +186,30 @@
                                                 <RoundRectangle CornerRadius="10"></RoundRectangle>
                                             </Border.StrokeShape>
 
-                                            <Label Text="{Binding ProductName}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            <Grid ColumnDefinitions="*">
+                                                <Label Text="{Binding ProductName}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Grid.Column="0" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="ProductNameLabel"/>
+                                                <Entry Text="{Binding ProductName}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Grid.Column="0" IsVisible="{Binding IsEditing}" x:Name="ProductNameEntryEdit"/>
+                                            </Grid>
                                         </Border>
                                         <Border Grid.Column="2" Stroke="Transparent" Background="White">
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="10"></RoundRectangle>
                                             </Border.StrokeShape>
 
-                                            <Label Text="{Binding PriceDisplay}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            <Grid ColumnDefinitions="*">
+                                                <Label Text="{Binding PriceDisplay}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Grid.Column="0" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="PriceLabel"/>
+                                                <Entry Text="{Binding PriceDisplay}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Grid.Column="0" IsVisible="{Binding IsEditing}" x:Name="PriceEntryEdit"/>
+                                            </Grid>
                                         </Border>
                                         <Border Grid.Column="3" Stroke="Transparent" Background="White">
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="10"></RoundRectangle>
                                             </Border.StrokeShape>
 
-                                            <Label Text="{Binding Sales}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            <Grid ColumnDefinitions="*">
+                                                <Label Text="{Binding Sales}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Grid.Column="0" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="SalesLabel"/>
+                                                <Entry Text="{Binding Sales}" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Grid.Column="0" IsVisible="{Binding IsEditing}" x:Name="SalesEntryEdit"/>
+                                            </Grid>
                                         </Border>
                                         <Border Grid.Column="4" Stroke="Transparent" Background="White" Padding="10">
                                             <Border.StrokeShape>
@@ -203,8 +217,11 @@
                                             </Border.StrokeShape>
 
                                             <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" >
-                                                <Button Text="Edit" Background="#FFAC00" TextColor="White" />
-                                                <Button Text="Delete" Background="#FF5A5A" TextColor="White" Clicked="DeleteBtnClicked" x:Name="DeleteBtn" CommandParameter="{Binding Id}"/>
+                                                <Grid ColumnDefinitions="*">
+                                                    <Button Text="Edit" Background="#FFAC00" TextColor="White" Clicked="EditBtnClicked" CommandParameter="{Binding Id}" Grid.Column="0" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"/>
+                                                    <Button Text="Save" Background="#36C51A" TextColor="White" Clicked="SaveBtnClicked" CommandParameter="{Binding Id}" Grid.Column="0" IsVisible="{Binding IsEditing}"/>
+                                                </Grid>
+                                                <Button Text="Delete" Background="#FF5A5A" TextColor="White" Clicked="DeleteBtnClicked" CommandParameter="{Binding Id}"/>
                                             </HorizontalStackLayout>
                                         </Border>
                                     </Grid>

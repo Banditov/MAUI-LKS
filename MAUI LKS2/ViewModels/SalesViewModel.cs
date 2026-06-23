@@ -137,9 +137,6 @@ namespace MAUI_LKS2.ViewModels
             }
         }
 
-        public async Task Filter()
-        {
-
-        }
+        // public async Task<bool> EditProduct(string productName, decimal price, int sales)
     }
 }
