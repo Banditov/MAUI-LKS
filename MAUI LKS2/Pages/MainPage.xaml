@@ -15,23 +15,24 @@
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False"></BackButtonBehavior>
     </Shell.BackButtonBehavior>
-    
+
     <Grid ColumnDefinitions="*">
         <Image 
+            x:Name="Background"
             Source="background.jpg" 
-            Aspect="AspectFill" />
+            Aspect="AspectFill"/>
 
         <Border 
             Stroke="White"
             Opacity="0.8"
             Scale="0.8"
-            StrokeThickness="2" >
+            StrokeThickness="2">
             
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="20" />
             </Border.StrokeShape>
 
-            <Grid RowDefinitions="Auto, Auto">
+            <Grid RowDefinitions="Auto, *" Padding="0,0,0,30">
                 <Grid.Background>#33FFFFFF</Grid.Background>
                 <VerticalStackLayout 
                     Padding="30, 30, 30, 15"
@@ -39,7 +40,7 @@
                     Spacing="15" >
 
                     <Grid 
-                        ColumnDefinitions="*, Auto"
+                        ColumnDefinitions="*, Auto, Auto"
                         ColumnSpacing="10" >
 
                         <Border
@@ -58,9 +59,15 @@
                         </Border>
                         <Button 
                             Grid.Column="1"
-                            x:Name="DatabaseBtn"
-                            Clicked="DatabaseBtnClicked"
+                            x:Name="DBBtnImport"
+                            Clicked="ImportBtnClicked"
                             Text="Import Database"
+                            WidthRequest="160" />
+                        <Button 
+                            Grid.Column="2"
+                            x:Name="DBBtnExport"
+                            Clicked="ExportBtnClicked"
+                            Text="Export Database"
                             WidthRequest="160" />
                         
                     </Grid>
@@ -162,15 +169,15 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="20"/>
                     </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="10">
-                        <Grid ColumnDefinitions="0.3*, 3*, *, 0.6*, 0.8*">
+                    <Grid RowDefinitions="Auto, *" RowSpacing="10">
+                        <Grid Grid.Row="0" ColumnDefinitions="0.3*, 3*, *, 0.6*, 0.8*">
                             <Label Grid.Column="0" Text="No." TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             <Label Grid.Column="1" Text="Product" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             <Label Grid.Column="2" Text="Price" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             <Label Grid.Column="3" Text="Sales" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             <Label Grid.Column="4" Text="Actions" TextColor="Black" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                         </Grid>
-                        <CollectionView x:Name="ProductsCollection" ItemsSource="{Binding Products}">
+                        <CollectionView Grid.Row="1" x:Name="ProductsCollection" ItemsSource="{Binding Products}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:Sale">
                                     <Grid ColumnDefinitions="0.3*, 3*, *, 0.6*, 0.8*" Padding="0,0,0,10" ColumnSpacing="10">
@@ -228,7 +235,7 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                    </VerticalStackLayout>
+                    </Grid>
                 </Border>
             </Grid>
         </Border>

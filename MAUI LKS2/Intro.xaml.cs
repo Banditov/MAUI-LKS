@@ -7,12 +7,12 @@ namespace MAUI_LKS2
         public Intro()
         {
             InitializeComponent();
-            Redirect(null, EventArgs.Empty) ;
+            Redirect() ;
         }
 
-        private async void Redirect(object? sender, EventArgs e)
+        private async void Redirect()
         {
-            await Shell.Current.GoToAsync("Pages/MainPage");
+            await Shell.Current.GoToAsync("Pages/NewMain");
         }
 
         private async void OnBtnClicked(object? sender, EventArgs e)

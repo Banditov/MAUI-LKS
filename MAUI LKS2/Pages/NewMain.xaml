@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MAUI_LKS2.Pages.NewMain"
+             Title="NewMain">
+    <Grid ColumnDefinitions="*">
+        <Image Source="background.jpg" Aspect="AspectFill" />
+        <Grid ColumnDefinitions="Auto, *" Margin="50">
+            <Border Grid.Column="0" Background="#33FFFFFF" Stroke="White" Margin="0,0,20,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+
+                <Grid RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="10" Padding="20">
+                    <!-- Search -->
+                    <Border Grid.Row="0" Background="#CBCBCB" Padding="5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <!-- TO BE IMPLEMENTED: Search -->
+                        <Entry x:Name="SearchBar" Background="White" Placeholder="Search..."/>
+                    </Border>
+
+                    <!-- Filter -->
+                    <Border Grid.Row="1" Background="#CBCBCB" Padding="5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <!-- TO BE IMPLEMENTED: Filter -->
+                        <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *, *" RowSpacing="5" ColumnSpacing="5">
+                            <Picker x:Name="FilterPicker" Background="White" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4"/>
+                            <Entry x:Name="Min" Background="White" Placeholder="Min" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+                            <Entry x:Name="Max" Background="White" Placeholder="Max" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"/>
+                            <Button x:Name="ApplyBtn" Background="#21BDE9" Text="Apply" TextColor="White" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
+                            <Button x:Name="ResetBtn" Background="#EC3F3F" Text="Reset" TextColor="White" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Export & Import -->
+                    <Border Grid.Row="2" Background="#CBCBCB" Padding="5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="5">
+                            <!-- TO BE IMPLEMENTED: Export & Import -->
+                            <Button x:Name="ImportBtn" Background="#3FC6EC" Text="Import DB" Grid.Column="0" TextColor="White"/>
+                            <Button x:Name="ExportBtn" Background="#EC3F3F" Text="Export DB" Grid.Column="1" TextColor="White"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Add -->
+                    <Border Grid.Row="3" Background="#CBCBCB" Padding="5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <!-- TO BE IMPLEMENTED: Add -->
+                        <Grid Grid.Row="0" RowDefinitions="*, *, *" RowSpacing="5">
+                            <Entry x:Name="ProductName" Background="White" Grid.Row="0" Placeholder="Product Name"/>
+                            <Entry x:Name="Price" Background="White" Grid.Row="1" Placeholder="Price"/>
+                            <Button x:Name="AddBtn" Background="#21BDE9" Text="Add +" Grid.Row="2" TextColor="White"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+            <Border Grid.Column="1" Background="#33FFFFFF" Stroke="White">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+                <Grid RowDefinitions="*" RowSpacing="10" Padding="20">
+                    <!-- Data Table -->
+                    <Border Grid.Row="2" Background="#CBCBCB" Padding="5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <Grid RowDefinitions="Auto, *" RowSpacing="5">
+                            <Grid Grid.Row="0" ColumnDefinitions="0.2*, 2.3*, *, 0.8*" ColumnSpacing="5">
+                                <Border Background="White" Stroke="Transparent" Grid.Column="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="ID" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                                <Border Background="White" Stroke="Transparent" Grid.Column="1">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="Product Name" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                                <Border Background="White" Stroke="Transparent" Grid.Column="2">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="Price" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                                <Border Background="White" Stroke="Transparent" Grid.Column="3">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="Actions" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                            </Grid>
+                            <Grid Grid.Row="1" RowDefinitions="Auto, Auto" RowSpacing="5">
+                                <CollectionView ItemsSource="" Grid.Row="1">
+                                    <CollectionView.EmptyViewTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="0.2*, 2.3*, *, 0.8*" ColumnSpacing="5">
+                                                <Border Background="White" Stroke="Transparent" Grid.Column="0">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10"/>
+                                                    </Border.StrokeShape>
+                                                    <Label Text="123" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                </Border>
+                                                <Border Background="White" Stroke="Transparent" Grid.Column="1">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10"/>
+                                                    </Border.StrokeShape>
+                                                    <Label Text="Placeholder" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                </Border>
+                                                <Border Background="White" Stroke="Transparent" Grid.Column="2">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10"/>
+                                                    </Border.StrokeShape>
+                                                    <Label Text="123" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                </Border>
+                                                <Border Background="White" Stroke="Transparent" Grid.Column="3">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10"/>
+                                                    </Border.StrokeShape>
+                                                    <Grid Padding="5" ColumnSpacing="5" ColumnDefinitions="Auto, Auto">
+                                                        <!-- TO BE IMPLEMENTED: Edit & Delete -->
+                                                        <Button x:Name="EditBtn" Grid.Column="0" Text="Edit" Background="#E1A51C" TextColor="White" WidthRequest="70"/>
+                                                        <Button x:Name="DeleteBtn" Grid.Column="1" Text="Delete" Background="#F24B4B" TextColor="White" WidthRequest="70"/>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.EmptyViewTemplate>
+                                    <!--
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                    -->
+                                </CollectionView>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

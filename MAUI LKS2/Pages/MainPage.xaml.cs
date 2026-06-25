@@ -1,6 +1,7 @@
 using MAUI_LKS2.Models;
 using MAUI_LKS2.ViewModels;
 using Microsoft.Data.SqlClient;
+using System.Text;
 
 namespace MAUI_LKS2.Pages;
 
@@ -70,11 +71,6 @@ public partial class MainPage : ContentPage
 		{
 			await DisplayAlertAsync("Error", ex.Message, "OK");
 		}
-    }
-
-    private void DatabaseBtnClicked(object? sender, EventArgs e)
-    {
-
     }
 
 	private async void DeleteBtnClicked(object? sender, EventArgs e)
@@ -222,5 +218,55 @@ public partial class MainPage : ContentPage
         var currentSource = ProductsCollection.ItemsSource;
         ProductsCollection.ItemsSource = null;
         ProductsCollection.ItemsSource = currentSource;
+    }
+
+    private async void ExportBtnClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
+
+            using SqlConnection connection = new(conn);
+            await connection.OpenAsync();
+
+            string query = "SELECT * FROM sales ORDER BY id";
+            using SqlCommand cmd = new(query, connection);
+            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+            var csvContent = new StringBuilder();
+
+            csvContent.AppendLine("Id,ProductName,Price,Sales");
+
+            while (await reader.ReadAsync())
+            {
+                csvContent.AppendLine($"{reader["id"]},{reader["product_name"]},{reader["price"]},{reader["sales"]}");
+            }
+
+            string fileName = $"Sales_Export_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            File.WriteAllText(filePath, csvContent.ToString());
+
+            await ShareFileAsync(filePath, fileName);
+
+            await DisplayAlertAsync("Success", $"Database exported to {fileName}", "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", $"Export failed: {ex.Message}", "OK");
+        }
+    }
+
+    private async Task ShareFileAsync(string filePath, string fileName)
+    {
+        await Share.Default.RequestAsync(new ShareFileRequest
+        {
+            Title = "Export Database",
+            File = new ShareFile(filePath)
+        });
+    }
+
+    private async void ImportBtnClicked(object? sender, EventArgs e)
+    {
+
     }
 }
