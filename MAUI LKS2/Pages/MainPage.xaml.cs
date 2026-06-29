@@ -1,7 +1,5 @@
 using MAUI_LKS2.Models;
 using MAUI_LKS2.ViewModels;
-using Microsoft.Data.SqlClient;
-using System.Text;
 
 namespace MAUI_LKS2.Pages;
 
@@ -12,69 +10,69 @@ public partial class MainPage : ContentPage
     private string _selectedFilter = "Price";
 
     public MainPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
         _viewModel = new SalesViewModel();
         BindingContext = _viewModel;
         LoadProducts();
     }
 
-    private async void LoadProducts()
+    private async Task LoadProducts()
     {
         await _viewModel.LoadProducts();
         _allProducts = _viewModel.Products.ToList();
         ProductsCollection.ItemsSource = _allProducts;
     }
 
-    private async void AddBtnClicked (object? sender, EventArgs e)
-	{
-		string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
+    private async void AddBtnClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            string productName = ProductNameEntry.Text?.Trim();
 
-		string ProductName = ProductNameEntry.Text;
-		int Price = Convert.ToInt32(PriceEntry.Text);
-		int Sales = Convert.ToInt32(SalesEntry.Text);
-
-		try 
-		{
-			using SqlConnection connection = new(conn);
-			await connection.OpenAsync();
-
-			string CheckQuery = "SELECT Count(*) FROM sales WHERE product_name = @ProductName";
-			using SqlCommand check = new(CheckQuery, connection);
-			check.Parameters.AddWithValue("@ProductName", ProductName);
-
-			int CheckCount = (int)await check.ExecuteScalarAsync();
-
-			if (CheckCount > 0)
-			{
-				await DisplayAlertAsync("Error", "Product already exist", "OK");
-				return;
-			}
-
-			string InsertQuery = "INSERT INTO sales (product_name, price, sales) VALUES (@ProductName, @Price, @Sales)";
-			using SqlCommand insert = new(InsertQuery, connection);
-			insert.Parameters.AddWithValue("@ProductName", ProductName);
-			insert.Parameters.AddWithValue("@Price", Price);
-			insert.Parameters.AddWithValue("@Sales", Sales);
-
-            int rowsAffected = await insert.ExecuteNonQueryAsync();
-
-            if (rowsAffected > 0)
+            if (string.IsNullOrWhiteSpace(productName))
             {
-                await DisplayAlertAsync("Success", "Product added!", "OK");
-                await Shell.Current.GoToAsync("Pages/MainPage");
+                await DisplayAlertAsync("Error", "Please enter a product name", "OK");
                 return;
             }
-            await DisplayAlertAsync("Error", "Failed to add product", "OK");
+
+            if (!decimal.TryParse(PriceEntry.Text, out decimal price))
+            {
+                await DisplayAlertAsync("Error", "Please enter a valid price", "OK");
+                return;
+            }
+
+            if (!int.TryParse(SalesEntry.Text, out int sales))
+            {
+                await DisplayAlertAsync("Error", "Please enter a valid sales number", "OK");
+                return;
+            }
+
+            bool success = await _viewModel.AddProduct(productName, price, sales);
+
+            if (success)
+            {
+                await DisplayAlertAsync("Success", "Product added!", "OK");
+
+                ProductNameEntry.Text = "";
+                PriceEntry.Text = "";
+                SalesEntry.Text = "";
+
+                await LoadProducts();
+            }
+            else
+            {
+                await DisplayAlertAsync("Error", "Failed to add product. Product may already exist.", "OK");
+            }
         }
-		catch(Exception ex)
-		{
-			await DisplayAlertAsync("Error", ex.Message, "OK");
-		}
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", ex.Message, "OK");
+        }
     }
 
-	private async void DeleteBtnClicked(object? sender, EventArgs e)
-	{
+    private async void DeleteBtnClicked(object? sender, EventArgs e)
+    {
         var button = (Button)sender;
         int productId = (int)button.CommandParameter;
 
@@ -86,13 +84,17 @@ public partial class MainPage : ContentPage
 
         try
         {
-            bool success = await ((SalesViewModel)BindingContext).DeleteProduct(productId);
+            bool success = await _viewModel.DeleteProduct(productId);
 
             if (success)
             {
                 await DisplayAlertAsync("Success", "Product deleted successfully!", "OK");
+                await LoadProducts();
             }
-            await DisplayAlertAsync("Error", "Failed to delete product", "OK");
+            else
+            {
+                await DisplayAlertAsync("Error", "Failed to delete product", "OK");
+            }
         }
         catch (Exception ex)
         {
@@ -104,6 +106,12 @@ public partial class MainPage : ContentPage
     {
         var button = (Button)sender;
         var product = button.BindingContext as Sale;
+        if (product == null) return;
+
+        product.EditProductName = product.ProductName;
+        product.EditPrice = product.Price.ToString();
+        product.EditSales = product.Sales.ToString();
+
         product.IsEditing = true;
         RefreshCollection();
     }
@@ -112,48 +120,64 @@ public partial class MainPage : ContentPage
     {
         var button = (Button)sender;
         var product = button.BindingContext as Sale;
-        int productId = (int)button.CommandParameter;
-
-        string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
-
-        var parentGrid = button.Parent as Grid;
-        var nameEntry = parentGrid.FindByName<Entry>("ProductNameEntryEdit");
-        var priceEntry = parentGrid.FindByName<Entry>("PriceEntryEdit");
-        var salesEntry = parentGrid.FindByName<Entry>("SalesEntryEdit");
-
-        string ProductName = nameEntry.Text;
-        decimal Price = Convert.ToDecimal(priceEntry.Text);
-        int Sales = Convert.ToInt32(salesEntry.Text);
+        if (product == null) return;
 
         try
         {
-            using SqlConnection connection = new(conn);
-            await connection.OpenAsync();
+            var parentGrid = button.Parent as Grid;
+            if (parentGrid == null) return;
 
-            string UpdateQuery = "UPDATE sales SET product_name = @ProductName, price = @Price, sales = @Sales WHERE id = @Id";
-            using SqlCommand update = new(UpdateQuery, connection);
-            update.Parameters.AddWithValue("@ProductName", ProductName);
-            update.Parameters.AddWithValue("@Price", Price);
-            update.Parameters.AddWithValue("@Sales", Sales);
-            update.Parameters.AddWithValue("@Id", productId);
+            var nameEntry = parentGrid.FindByName<Entry>("ProductNameEntryEdit");
+            var priceEntry = parentGrid.FindByName<Entry>("PriceEntryEdit");
+            var salesEntry = parentGrid.FindByName<Entry>("SalesEntryEdit");
 
-            int rowsAffected = await update.ExecuteNonQueryAsync();
-
-            if (rowsAffected > 0)
+            if (nameEntry == null || priceEntry == null || salesEntry == null)
             {
-                await DisplayAlertAsync("Success", "Product edited!", "OK");
-                await Shell.Current.GoToAsync("Pages/MainPage");
+                await DisplayAlertAsync("Error", "Could not find entry fields", "OK");
                 return;
             }
-            await DisplayAlertAsync("Error", "Failed to edit product", "OK");
+
+            string productName = nameEntry.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(productName))
+            {
+                await DisplayAlertAsync("Error", "Product name cannot be empty", "OK");
+                return;
+            }
+
+            if (!decimal.TryParse(priceEntry.Text, out decimal price))
+            {
+                await DisplayAlertAsync("Error", "Please enter a valid price", "OK");
+                return;
+            }
+
+            if (!int.TryParse(salesEntry.Text, out int sales))
+            {
+                await DisplayAlertAsync("Error", "Please enter a valid sales number", "OK");
+                return;
+            }
+
+            product.ProductName = productName;
+            product.Price = price;
+            product.Sales = sales;
+
+            bool success = await _viewModel.UpdateProduct(product);
+
+            if (success)
+            {
+                await DisplayAlertAsync("Success", "Product updated!", "OK");
+                product.IsEditing = false;
+                await LoadProducts();
+            }
+            else
+            {
+                await DisplayAlertAsync("Error", "Failed to update product", "OK");
+            }
         }
         catch (Exception ex)
         {
             await DisplayAlertAsync("Error", ex.Message, "OK");
         }
-
-        product.IsEditing = false;
-        RefreshCollection();
     }
 
     private void OnFilterPickerSelected(object sender, EventArgs e)
@@ -161,10 +185,9 @@ public partial class MainPage : ContentPage
         var picker = (Picker)sender;
         _selectedFilter = picker.SelectedItem?.ToString() ?? "Price";
     }
-
     private async void FilterApply(object? sender, EventArgs e)
     {
-        string search = SearchBar.Text ?? "";
+        string search = SearchBar.Text?.Trim() ?? "";
 
         int min = 0;
         int max = int.MaxValue;
@@ -210,6 +233,9 @@ public partial class MainPage : ContentPage
 
     private async void FilterReset(object? sender, EventArgs e)
     {
+        SearchBar.Text = "";
+        MinEntry.Text = "";
+        MaxEntry.Text = "";
         ProductsCollection.ItemsSource = _allProducts;
     }
 
@@ -224,27 +250,18 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
+            var csvData = await _viewModel.ExportProducts();
 
-            using SqlConnection connection = new(conn);
-            await connection.OpenAsync();
-
-            string query = "SELECT * FROM sales ORDER BY id";
-            using SqlCommand cmd = new(query, connection);
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-            var csvContent = new StringBuilder();
-
-            csvContent.AppendLine("Id,ProductName,Price,Sales");
-
-            while (await reader.ReadAsync())
+            if (csvData == null || csvData.Length == 0)
             {
-                csvContent.AppendLine($"{reader["id"]},{reader["product_name"]},{reader["price"]},{reader["sales"]}");
+                await DisplayAlertAsync("Error", "No data to export", "OK");
+                return;
             }
 
             string fileName = $"Sales_Export_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            File.WriteAllText(filePath, csvContent.ToString());
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+
+            await File.WriteAllBytesAsync(filePath, csvData);
 
             await ShareFileAsync(filePath, fileName);
 
@@ -267,6 +284,6 @@ public partial class MainPage : ContentPage
 
     private async void ImportBtnClicked(object? sender, EventArgs e)
     {
-
+        await DisplayAlertAsync("DEBUG", "IMPORT PLACEHOLDER", "OK");
     }
 }

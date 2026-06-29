@@ -1,14 +1,17 @@
-using Microsoft.Data.SqlClient;
+using MAUI_LKS2.Models;
+using MAUI_LKS2.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using MAUI_LKS2.Models;
 
 namespace MAUI_LKS2.ViewModels
 {
     public class SalesViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<Sale> _products;
+        private readonly ApiService _apiService;
+        private ObservableCollection<Sale> _products = new();
+        private bool _isLoading;
+
         public ObservableCollection<Sale> Products
         {
             get => _products;
@@ -19,76 +22,71 @@ namespace MAUI_LKS2.ViewModels
             }
         }
 
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged();
+            }
+        }
+
         public SalesViewModel()
         {
+            string baseUrl;
+
+            if (DeviceInfo.Current.Platform == DevicePlatform.Android)
+            {
+                baseUrl = "https://10.0.2.2:7134/api/";
+            }
+            else
+            {
+                baseUrl = "https://localhost:7134/api/";
+            }
+
+            _apiService = new ApiService(baseUrl);
             Products = new ObservableCollection<Sale>();
             LoadProducts();
         }
 
         public async Task LoadProducts()
         {
-            string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
-
+            IsLoading = true;
             try
             {
-                using SqlConnection connection = new(conn);
-                await connection.OpenAsync();
-
-                string query = "SELECT id, product_name, price, sales FROM sales ORDER BY id";
-                using SqlCommand cmd = new(query, connection);
-                using SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-                Products.Clear();
-                while (await reader.ReadAsync())
+                var sales = await _apiService.GetSalesAsync();
+                if (sales != null)
                 {
-                    Products.Add(new Sale
-                    {
-                        Id = reader.GetInt32(0),
-                        ProductName = reader.IsDBNull(1) ? "" : reader.GetString(1),
-                        Price = reader.GetDecimal(2),
-                        Sales = reader.GetInt32(3)
-                    });
+                    Products = new ObservableCollection<Sale>(sales);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Error loading products: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
-
         public async Task<bool> AddProduct(string productName, decimal price, int sales)
         {
-            string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
-
             try
             {
-                using SqlConnection connection = new(conn);
-                await connection.OpenAsync();
-
-                string checkQuery = "SELECT COUNT(*) FROM sales WHERE product_name = @ProductName";
-                using SqlCommand checkCmd = new(checkQuery, connection);
-                checkCmd.Parameters.AddWithValue("@ProductName", productName);
-
-                int count = (int)await checkCmd.ExecuteScalarAsync();
-                if (count > 0)
+                var dto = new CreateSaleDto
                 {
-                    return false;
-                }
+                    ProductName = productName,
+                    Price = price,
+                    Sales = sales
+                };
 
-                string insertQuery = "INSERT INTO sales (product_name, price, sales) VALUES (@ProductName, @Price, @Sales)";
-                using SqlCommand insertCmd = new(insertQuery, connection);
-                insertCmd.Parameters.AddWithValue("@ProductName", productName);
-                insertCmd.Parameters.AddWithValue("@Price", price);
-                insertCmd.Parameters.AddWithValue("@Sales", sales);
-
-                int rowsAffected = await insertCmd.ExecuteNonQueryAsync();
-
-                if (rowsAffected > 0)
+                var result = await _apiService.CreateSaleAsync(dto);
+                if (result != null)
                 {
                     await LoadProducts();
                     return true;
                 }
-
                 return false;
             }
             catch (Exception ex)
@@ -97,35 +95,14 @@ namespace MAUI_LKS2.ViewModels
                 return false;
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public async Task<bool> DeleteProduct(int id)
         {
-            string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
-
             try
             {
-                using SqlConnection connection = new(conn);
-                await connection.OpenAsync();
-
-                string query = "DELETE FROM sales WHERE id = @Id";
-                using SqlCommand cmd = new(query, connection);
-                cmd.Parameters.AddWithValue("@Id", id);
-
-                int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-                if (rowsAffected > 0)
+                var result = await _apiService.DeleteSaleAsync(id);
+                if (result)
                 {
-                    var productToRemove = Products.FirstOrDefault(p => p.Id == id);
-                    if (productToRemove != null)
-                    {
-                        Products.Remove(productToRemove);
-                    }
+                    await LoadProducts();
                     return true;
                 }
                 return false;
@@ -136,7 +113,60 @@ namespace MAUI_LKS2.ViewModels
                 return false;
             }
         }
+        public async Task<bool> UpdateProduct(Sale sale)
+        {
+            try
+            {
+                var dto = new UpdateSaleDto
+                {
+                    ProductName = sale.ProductName,
+                    Price = sale.Price,
+                    Sales = sale.Sales
+                };
 
-        // public async Task<bool> EditProduct(string productName, decimal price, int sales)
+                var result = await _apiService.UpdateSaleAsync(sale.Id, dto);
+                if (result)
+                {
+                    await LoadProducts();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Update error: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<List<Sale>?> SearchProducts(string query)
+        {
+            try
+            {
+                return await _apiService.SearchSalesAsync(query);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Search error: {ex.Message}");
+                return null;
+            }
+        }
+        public async Task<byte[]?> ExportProducts()
+        {
+            try
+            {
+                return await _apiService.ExportSalesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Export error: {ex.Message}");
+                return null;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

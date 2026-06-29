@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="MAUI LKS2/MAUI LKS2.csproj" />
+  <Project Path="MAUI LKS2/MAUI LKS2.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="MAUILKSAPI/MAUILKSAPI.csproj" Id="a4cb9417-f0c8-46ba-a5f3-257761d59646" />
 </Solution>

@@ -1,0 +1,6 @@
+@MAUILKSAPI_HostAddress = http://localhost:5097
+
+GET {{MAUILKSAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
