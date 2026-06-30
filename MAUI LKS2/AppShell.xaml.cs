@@ -11,7 +11,6 @@ namespace MAUI_LKS2
             Routing.RegisterRoute("Pages/Login", typeof(Login));
             Routing.RegisterRoute("Pages/Register", typeof(Register));
             Routing.RegisterRoute("Pages/MainPage", typeof(MainPage));
-            Routing.RegisterRoute("Pages/NewMain", typeof(NewMain));
         }
     }
 }
