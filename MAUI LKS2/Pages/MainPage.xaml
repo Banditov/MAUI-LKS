@@ -65,7 +65,7 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10"/>
                         </Border.StrokeShape>
-                        <Entry x:Name="SearchBar" Background="White" Placeholder="Search..."/>
+                        <Entry x:Name="SearchBar" Background="White" Placeholder="Search..." TextColor="Black"/>
                     </Border>
 
                     <!-- Filter -->
@@ -74,7 +74,7 @@
                             <RoundRectangle CornerRadius="10"/>
                         </Border.StrokeShape>
                         <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *, *" RowSpacing="5" ColumnSpacing="5">
-                            <Picker x:Name="FilterPicker" Background="White" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" SelectedIndexChanged="OnFilterPickerSelected">
+                            <Picker x:Name="FilterPicker" Background="White" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" SelectedIndexChanged="OnFilterPickerSelected" TextColor="Black">
                                 <Picker.Items>
                                     <x:String>No.</x:String>
                                     <x:String>Price</x:String>
@@ -101,7 +101,7 @@
                     </Border>
 
                     <!-- Add -->
-                    <Border Grid.Row="3" Background="#CBCBCB" Padding="5">
+                    <Border x:Name="AddSection" Grid.Row="3" Background="#CBCBCB" Padding="5" IsVisible="{Binding IsAdmin}">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10"/>
                         </Border.StrokeShape>
@@ -125,7 +125,33 @@
                             <RoundRectangle CornerRadius="10"/>
                         </Border.StrokeShape>
                         <Grid RowDefinitions="Auto, *" RowSpacing="5">
-                            <Grid Grid.Row="0" ColumnDefinitions="1*, 4*, *, *, 1.6*" ColumnSpacing="5">
+                            <Grid Grid.Row="0" ColumnDefinitions="1*, 4*, *, *" ColumnSpacing="5" IsVisible="{Binding IsAdmin, Converter={StaticResource InverseBoolConverter}}">
+                                <Border Background="White" Stroke="Transparent" Grid.Column="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="ID" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                                <Border Background="White" Stroke="Transparent" Grid.Column="1">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="Product Name" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                                <Border Background="White" Stroke="Transparent" Grid.Column="2">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="Price" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                                <Border Background="White" Stroke="Transparent" Grid.Column="3">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="Sales" HorizontalTextAlignment="Center" TextColor="Black"/>
+                                </Border>
+                            </Grid>
+                            <Grid Grid.Row="0" ColumnDefinitions="1*, 4*, *, *, 1.6*" ColumnSpacing="5" IsVisible="{Binding IsAdmin}">
                                 <Border Background="White" Stroke="Transparent" Grid.Column="0">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10"/>
@@ -161,52 +187,86 @@
                                 <CollectionView x:Name="ProductsCollection" ItemsSource="{Binding Products}" Grid.Row="1">
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate x:DataType="models:Sale">
-                                            <Grid ColumnDefinitions="1*, 4*, *, *, 1.6*" ColumnSpacing="5">
-                                                <Border Background="White" Stroke="Transparent" Grid.Column="0">
-                                                    <Border.StrokeShape>
-                                                        <RoundRectangle CornerRadius="10"/>
-                                                    </Border.StrokeShape>
-                                                    <Label Text="{Binding Id}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
-                                                </Border>
-                                                <Border Background="White" Stroke="Transparent" Grid.Column="1">
-                                                    <Border.StrokeShape>
-                                                        <RoundRectangle CornerRadius="10"/>
-                                                    </Border.StrokeShape>
-                                                    <Grid RowDefinitions="*">
-                                                        <Label Text="{Binding ProductName}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="ProductNameLabel"/>
-                                                        <Entry Text="{Binding ProductName}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing}" x:Name="ProductNameEntryEdit"/>
-                                                    </Grid>
-                                                </Border>
-                                                <Border Background="White" Stroke="Transparent" Grid.Column="2">
-                                                    <Border.StrokeShape>
-                                                        <RoundRectangle CornerRadius="10"/>
-                                                    </Border.StrokeShape>
-                                                    <Grid RowDefinitions="*">
-                                                        <Label Text="{Binding Price}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="PriceLabel"/>
-                                                        <Entry Text="{Binding Price}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing}" x:Name="PriceEntryEdit"/>
-                                                    </Grid>
-                                                </Border>
-                                                <Border Background="White" Stroke="Transparent" Grid.Column="3">
-                                                    <Border.StrokeShape>
-                                                        <RoundRectangle CornerRadius="10"/>
-                                                    </Border.StrokeShape>
-                                                    <Grid RowDefinitions="*">
-                                                        <Label Text="{Binding Sales}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="SalesLabel"/>
-                                                        <Entry Text="{Binding Sales}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing}" x:Name="SalesEntryEdit"/>
-                                                    </Grid>
-                                                </Border>
-                                                <Border Background="White" Stroke="Transparent" Grid.Column="4">
-                                                    <Border.StrokeShape>
-                                                        <RoundRectangle CornerRadius="10"/>
-                                                    </Border.StrokeShape>
-                                                    <Grid Padding="5" ColumnSpacing="5" ColumnDefinitions="Auto, Auto">
-                                                        <Grid ColumnDefinitions="*" Grid.Column="0">
-                                                            <Button Text="Edit" Background="#FFAC00" TextColor="White" Clicked="EditBtnClicked" WidthRequest="70" CommandParameter="{Binding Id}" Grid.Column="0" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"/>
-                                                            <Button Text="Save" Background="#36C51A" TextColor="White" Clicked="SaveBtnClicked" WidthRequest="70" CommandParameter="{Binding Id}" Grid.Column="0" IsVisible="{Binding IsEditing}"/>
+                                            <Grid>
+                                                <Grid ColumnDefinitions="1*, 4*, *, *" ColumnSpacing="5" IsVisible="{Binding Source={x:Reference ProductsCollection}, Path=BindingContext.IsAdmin, Converter={StaticResource InverseBoolConverter}}">
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="0">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Label Text="{Binding Id}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="1">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid RowDefinitions="*">
+                                                            <Label Text="{Binding ProductName}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
                                                         </Grid>
-                                                        <Button Grid.Column="1" Text="Delete" Background="#FF5A5A" TextColor="White" Clicked="DeleteBtnClicked" WidthRequest="70" CommandParameter="{Binding Id}"/>
-                                                    </Grid>
-                                                </Border>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="2">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid RowDefinitions="*">
+                                                            <Label Text="{Binding Price}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="3">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid RowDefinitions="*">
+                                                            <Label Text="{Binding Sales}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                                <Grid ColumnDefinitions="1*, 4*, *, *, 1.6*" ColumnSpacing="5" IsVisible="{Binding Source={x:Reference ProductsCollection}, Path=BindingContext.IsAdmin}">
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="0">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Label Text="{Binding Id}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black"/>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="1">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid RowDefinitions="*">
+                                                            <Label Text="{Binding ProductName}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="ProductNameLabel"/>
+                                                            <Entry Text="{Binding ProductName}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing}" x:Name="ProductNameEntryEdit"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="2">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid RowDefinitions="*">
+                                                            <Label Text="{Binding Price}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="PriceLabel"/>
+                                                            <Entry Text="{Binding Price}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing}" x:Name="PriceEntryEdit"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="3">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid RowDefinitions="*">
+                                                            <Label Text="{Binding Sales}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" x:Name="SalesLabel"/>
+                                                            <Entry Text="{Binding Sales}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Black" IsVisible="{Binding IsEditing}" x:Name="SalesEntryEdit"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border Background="White" Stroke="Transparent" Grid.Column="4">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10"/>
+                                                        </Border.StrokeShape>
+                                                        <Grid Padding="5" ColumnSpacing="5" ColumnDefinitions="Auto, Auto">
+                                                            <Grid ColumnDefinitions="*" Grid.Column="0">
+                                                                <Button Text="Edit" Background="#FFAC00" TextColor="White" Clicked="EditBtnClicked" WidthRequest="70" CommandParameter="{Binding Id}" Grid.Column="0" IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"/>
+                                                                <Button Text="Save" Background="#36C51A" TextColor="White" Clicked="SaveBtnClicked" WidthRequest="70" CommandParameter="{Binding Id}" Grid.Column="0" IsVisible="{Binding IsEditing}"/>
+                                                            </Grid>
+                                                            <Button Grid.Column="1" Text="Delete" Background="#FF5A5A" TextColor="White" Clicked="DeleteBtnClicked" WidthRequest="70" CommandParameter="{Binding Id}"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
                                             </Grid>
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>

@@ -76,6 +76,12 @@
                     MinimumHeightRequest="0"
                     MinimumWidthRequest="0" />
 
+                <!-- Debugging purpose -->
+                <HorizontalStackLayout HorizontalOptions="Center">
+                    <CheckBox x:Name="AdminCheckBox" />
+                    <Label Text="Register as Admin" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
             </VerticalStackLayout>
 
             <Button 

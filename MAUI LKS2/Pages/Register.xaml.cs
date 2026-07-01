@@ -1,17 +1,21 @@
-using Microsoft.Data.SqlClient;
+using MAUI_LKS2.Models;
+using MAUI_LKS2.Services;
 
 namespace MAUI_LKS2.Pages;
 
 public partial class Register : ContentPage
 {
-	public Register()
-	{
-		InitializeComponent();
+    private AuthService _authService;
+
+    public Register()
+    {
+        InitializeComponent();
+        _authService = new AuthService();
 
         PasswordEntry.TextChanged += OnFormInput;
         PasswordEntryConf.TextChanged += OnFormInput;
         EmailEntry.TextChanged += OnFormInput;
-	}
+    }
 
     private void OnFormInput(object? sender, EventArgs e)
     {
@@ -22,21 +26,24 @@ public partial class Register : ContentPage
         RegisterBtn.IsEnabled = isActive;
     }
 
-    private async void OnLoginBtnClicked (object? sender, EventArgs e)
-	{
-		await Shell.Current.GoToAsync("Pages/Login");
-	}
+    private async void OnLoginBtnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("Pages/Login");
+    }
 
-	private void OnEyeBtnClicked(object? sender, EventArgs e)
-	{
-		if (PasswordEntry.IsPassword == true)
-		{
-			PasswordEntry.IsPassword = false;
+    private void OnEyeBtnClicked(object? sender, EventArgs e)
+    {
+        if (PasswordEntry.IsPassword == true)
+        {
+            PasswordEntry.IsPassword = false;
             PasswordShow.BackgroundColor = Color.FromArgb("#464646");
         }
-		PasswordEntry.IsPassword = true;
-        PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
-	}
+        else
+        {
+            PasswordEntry.IsPassword = true;
+            PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
+        }
+    }
 
     private void OnEyeBtnClickedConf(object? sender, EventArgs e)
     {
@@ -45,8 +52,11 @@ public partial class Register : ContentPage
             PasswordEntryConf.IsPassword = false;
             PasswordShowConf.BackgroundColor = Color.FromArgb("#464646");
         }
-        PasswordEntryConf.IsPassword = true;
-        PasswordShowConf.BackgroundColor = Color.FromArgb("#7676ED");
+        else
+        {
+            PasswordEntryConf.IsPassword = true;
+            PasswordShowConf.BackgroundColor = Color.FromArgb("#7676ED");
+        }
     }
 
     private static string HashPassword(string password)
@@ -56,58 +66,62 @@ public partial class Register : ContentPage
 
     private async void OnRegisterBtnClicked(object? sender, EventArgs e)
     {
-        string email = EmailEntry.Text;
+        string email = EmailEntry.Text?.Trim();
         string password = PasswordEntry.Text;
         string passwordConf = PasswordEntryConf.Text;
 
-        string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MAUILKS;Integrated Security=True;";
-
-        if (password == passwordConf)
+        if (string.IsNullOrEmpty(email))
         {
-            try
+            await DisplayAlertAsync("Error", "Please enter an email", "OK");
+            return;
+        }
+
+        if (password != passwordConf)
+        {
+            await DisplayAlertAsync("Wrong Input", "Password confirmation is wrong!", "OK");
+            return;
+        }
+
+        if (password.Length < 6)
+        {
+            await DisplayAlertAsync("Error", "Password must be at least 6 characters", "OK");
+            return;
+        }
+
+        string role = AdminCheckBox.IsChecked ? "Admin" : "User";
+
+        RegisterBtn.IsEnabled = false;
+        RegisterBtn.Text = "Creating account...";
+
+        try
+        {
+            var registerRequest = new RegisterRequest
             {
-                using SqlConnection connection = new(conn);
-                await connection.OpenAsync();
+                Email = email,
+                Password = password,
+                Role = role
+            };
 
-                string checkQuery = "SELECT COUNT(*) FROM accounts WHERE email = @email";
+            bool success = await _authService.RegisterAsync(registerRequest);
 
-                using SqlCommand checkCmd = new(checkQuery, connection);
-                checkCmd.Parameters.AddWithValue("@email", email);
-
-#pragma warning disable CS8605 // Unboxing a possibly null value.
-                int existingCount = (int)await checkCmd.ExecuteScalarAsync();
-#pragma warning restore CS8605 // Unboxing a possibly null value.
-
-                if (existingCount > 0)
-                {
-                    await DisplayAlertAsync("Error", "Email already registered", "OK");
-                    return;
-                }
-
-                string hashedPassword = Register.HashPassword(password);
-
-                string insertQuery = @"
-                INSERT INTO accounts (email, password) 
-                VALUES (@Email, @PasswordHash)";
-
-                using SqlCommand insertCmd = new(insertQuery, connection);
-                insertCmd.Parameters.AddWithValue("@Email", email);
-                insertCmd.Parameters.AddWithValue("@PasswordHash", hashedPassword);
-
-                int rowsAffected = await insertCmd.ExecuteNonQueryAsync();
-
-                if (rowsAffected > 0)
-                {
-                    await DisplayAlertAsync("Success", "Account created successfully!", "OK");
-                    await Shell.Current.GoToAsync("Pages/Login");
-                }
-                await DisplayAlertAsync("Error", "Failed to create account", "OK");
+            if (success)
+            {
+                await DisplayAlertAsync("Success", "Account created successfully!", "OK");
+                await Shell.Current.GoToAsync("Pages/Login");
             }
-            catch (Exception ex)
+            else
             {
-                await DisplayAlertAsync("Error", ex.Message, "OK");
+                await DisplayAlertAsync("Error", "Email already registered or registration failed", "OK");
             }
         }
-        await DisplayAlertAsync("Wrong Input", "Password confirmation is wrong!", "OK");
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", ex.Message, "OK");
+        }
+        finally
+        {
+            RegisterBtn.IsEnabled = true;
+            RegisterBtn.Text = "Register";
+        }
     }
 }

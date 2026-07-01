@@ -7,7 +7,7 @@ namespace MAUI_LKS2
         public Intro()
         {
             InitializeComponent();
-            Redirect() ;
+            // Redirect() ;
         }
 
         private async void Redirect()

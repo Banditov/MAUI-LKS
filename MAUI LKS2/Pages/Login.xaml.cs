@@ -1,80 +1,88 @@
-using Microsoft.Data.SqlClient;
+using MAUI_LKS2.Services;
+using MAUI_LKS2.Models;
 
 namespace MAUI_LKS2.Pages;
 
 public partial class Login : ContentPage
 {
-	public Login()
-	{
-		InitializeComponent();
+    private AuthService _authService;
 
-		EmailEntry.TextChanged += OnFormChange;
-		PasswordEntry.TextChanged += OnFormChange;
-	}
+    public Login()
+    {
+        InitializeComponent();
 
-	private void OnFormChange (object? sender, EventArgs e)
-	{
-		bool isActive = !string.IsNullOrEmpty(EmailEntry.Text) &&
-						!string.IsNullOrEmpty(PasswordEntry.Text);
+        _authService = new AuthService();
 
-		LoginBtn.IsEnabled = isActive;
+        EmailEntry.TextChanged += OnFormChange;
+        PasswordEntry.TextChanged += OnFormChange;
     }
 
-	private async void OnLoginBtnClicked(object? sender, EventArgs e)
-	{
-		string email = EmailEntry.Text;
-		string password = PasswordEntry.Text;
+    private void OnFormChange(object? sender, EventArgs e)
+    {
+        bool isActive = !string.IsNullOrEmpty(EmailEntry.Text) &&
+                        !string.IsNullOrEmpty(PasswordEntry.Text);
 
-		string conn = @"Data Source=(localdb)\MSSQLLOCALDB;Initial Catalog=MAUILKS;Integrated Security=True;";
+        LoginBtn.IsEnabled = isActive;
+    }
 
-		try
+    private async void OnLoginBtnClicked(object? sender, EventArgs e)
+    {
+        string email = EmailEntry.Text?.Trim();
+        string password = PasswordEntry.Text;
+
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            using SqlConnection connection = new(conn);
-            await connection.OpenAsync();
+            await DisplayAlertAsync("Error", "Please enter email and password", "OK");
+            return;
+        }
 
-			string findQuery = "SELECT password FROM accounts WHERE email = @email;";
+        LoginBtn.IsEnabled = false;
+        LoginBtn.Text = "Logging in...";
 
-			using SqlCommand find = new(findQuery, connection);
-			find.Parameters.AddWithValue("@email", email);
+        try
+        {
+            var user = await _authService.LoginAsync(email, password);
 
-            object? result = await find.ExecuteScalarAsync();
+            if (user != null)
+            {
+                App.CurrentUser = user;
 
-            if (result == null)
+                await DisplayAlertAsync("Success", $"Welcome!", "OK");
+
+                await Shell.Current.GoToAsync("Pages/MainPage");
+            }
+            else
             {
                 await DisplayAlertAsync("Login Failed", "Invalid email or password", "OK");
-                return;
             }
-
-            string storedHash = result.ToString()!;
-
-            bool isValid = BCrypt.Net.BCrypt.Verify(password, storedHash);
-
-            if (isValid)
-            {
-                await DisplayAlertAsync("Success", "Login successful!", "OK");
-                await Shell.Current.GoToAsync("/Pages/MainPage");
-            }
-            await DisplayAlertAsync("Login Failed", "Invalid email or password", "OK");
         }
-		catch (Exception ex)
-		{
-			await DisplayAlertAsync("Error", $"Database connection failed: {ex.Message}", "OK");
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Error", $"Login failed: {ex.Message}", "OK");
+        }
+        finally
+        {
+            LoginBtn.IsEnabled = true;
+            LoginBtn.Text = "Login";
         }
     }
 
-	private void OnEyeBtnClicked(object? sender, EventArgs e)
-	{
+    private void OnEyeBtnClicked(object? sender, EventArgs e)
+    {
         if (PasswordEntry.IsPassword == true)
-		{
-			PasswordEntry.IsPassword = false;
-			PasswordShow.BackgroundColor = Color.FromArgb("#464646");
+        {
+            PasswordEntry.IsPassword = false;
+            PasswordShow.BackgroundColor = Color.FromArgb("#464646");
         }
-		PasswordEntry.IsPassword = true;
-		PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
-	}
+        else
+        {
+            PasswordEntry.IsPassword = true;
+            PasswordShow.BackgroundColor = Color.FromArgb("#7676ED");
+        }
+    }
 
-	private async void OnRegisterBtnClicked (object? sender, EventArgs e)
-	{
-		await Shell.Current.GoToAsync("Pages/Register");
-	}
+    private async void OnRegisterBtnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("Pages/Register");
+    }
 }

@@ -10,8 +10,6 @@ namespace MAUI_LKS2.Models
         private string _productName = string.Empty;
         private decimal _price;
         private int _sales;
-        private DateTime _createdAt = DateTime.UtcNow;
-        private DateTime? _updatedAt;
         private bool _isEditing;
         private string _editProductName = string.Empty;
         private string _editPrice = string.Empty;
@@ -48,20 +46,6 @@ namespace MAUI_LKS2.Models
         {
             get => _sales;
             set { _sales = value; OnPropertyChanged(); }
-        }
-
-        [JsonPropertyName("createdAt")]
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set { _createdAt = value; OnPropertyChanged(); }
-        }
-
-        [JsonPropertyName("updatedAt")]
-        public DateTime? UpdatedAt
-        {
-            get => _updatedAt;
-            set { _updatedAt = value; OnPropertyChanged(); }
         }
 
         public string PriceDisplay => $"${Price:F2}";

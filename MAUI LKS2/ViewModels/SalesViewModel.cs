@@ -12,6 +12,17 @@ namespace MAUI_LKS2.ViewModels
         private ObservableCollection<Sale> _products = new();
         private bool _isLoading;
 
+        private bool _isAdmin;
+        public bool IsAdmin
+        {
+            get => _isAdmin;
+            set
+            {
+                _isAdmin = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<Sale> Products
         {
             get => _products;
@@ -35,6 +46,8 @@ namespace MAUI_LKS2.ViewModels
         public SalesViewModel()
         {
             string baseUrl;
+
+            IsAdmin = App.CurrentUser?.IsAdmin ?? false;
 
             if (DeviceInfo.Current.Platform == DevicePlatform.Android)
             {

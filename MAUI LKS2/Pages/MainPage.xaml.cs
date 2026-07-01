@@ -14,6 +14,9 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         _viewModel = new SalesViewModel();
         BindingContext = _viewModel;
+
+        System.Diagnostics.Debug.WriteLine($"App.CurrentUser.IsAdmin: {App.CurrentUser?.IsAdmin}");
+
         LoadProducts();
     }
 
@@ -285,5 +288,25 @@ public partial class MainPage : ContentPage
     private async void ImportBtnClicked(object? sender, EventArgs e)
     {
         await DisplayAlertAsync("DEBUG", "IMPORT PLACEHOLDER", "OK");
+    }
+
+    private User _currentUser;
+
+    public MainPage(User user)
+    {
+        InitializeComponent();
+        _currentUser = user;
+        BindingContext = new SalesViewModel();
+
+        SetControlVisibility();
+    }
+
+    private void SetControlVisibility()
+    {
+        bool isAdmin = _currentUser?.IsAdmin ?? false;
+
+        AddSection.IsVisible = isAdmin;
+
+        ((SalesViewModel)BindingContext).IsAdmin = isAdmin;
     }
 }

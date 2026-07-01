@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MAUI_LKS2.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MAUI_LKS2
 {
     public partial class App : Application
     {
+        public static User CurrentUser { get; set; }
+
         public App()
         {
             UserAppTheme = AppTheme.Dark;
